@@ -10,14 +10,15 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
     model = User
     list_display = ('email', 'first_name', 'last_name', 'role', 'is_staff')
-    list_filter = ('is_staff', 'is_superuser', 'groups')
+    list_filter = ('is_active', 'is_staff', 'is_superuser', 'role')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'role')}),
         (_('Permissions'), {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+            # 'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+            'fields': ('is_active', 'is_staff', 'is_superuser',),
         }),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        # (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
         (None, {
