@@ -44,7 +44,15 @@ def Home(request):
             return render(request, 'shop.html', context)
     
     elif request.user.groups.filter(name="stock-Manager").exists() and request.user.is_superuser != True:
-        return render(request, 'STOCK.html')
+        categories = Category.objects.all()
+        sizes = Size.objects.all()
+        items = Item.objects.filter(quantity__gt=0)
+        context = {
+            'categories': categories,
+            'sizes': sizes,
+            'items': items,
+        }
+        return render(request, 'stock.html', context)
     elif request.user.is_superuser:
         return render(request, 'index.html')
     else:
@@ -82,6 +90,10 @@ def sales_view(request):
             'form': form
         }
         return render(request, 'sales.html', context)
+
+
+
+
 
 
 @user_passes_test(lambda user: user.is_authenticated)

@@ -16,8 +16,6 @@
         <th>Size</th>
         <th>Quantity</th>
         <th>Price</th>
-        <th>Quantity to Sell</th>
-        <th>Price per Item</th>
       </tr>
     </thead>
     <tbody>
@@ -27,14 +25,7 @@
           <td>{{ item.size.size_name }}</td>
           <td>{{ item.quantity }}</td>
           <td>{{ item.price }}</td>
-          <td>
-            <input type="number" name="quantity_{{ item.item_id }}">
-          </td>
-          <td>
-            <input type="number" name="price_{{ item.item_id }}">
-          </td>
-        </tr>
-      {% empty %}
+               {% empty %}
         <tr>
           <td colspan="6">No items available</td>
         </tr>
