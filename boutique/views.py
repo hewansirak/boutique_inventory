@@ -4,8 +4,21 @@ from .decorators import stock_manager_required, shop_keeper_required, admin_requ
 from django.contrib import messages
 from .models import Category, Size, Item, Purchase, Warehouse, Supplier, Sales
 from .forms import *
+from django.contrib.auth.views import LoginView
 
 
+class loginView(LoginView):
+    template_name = 'login.html'
+
+def Home(request):
+    if request.user.groups.filter(name="shop-keeper").exists() and request.user.is_superuser != True:
+        return render(request, 'SHOP.html')
+    elif request.user.groups.filter(name="stock-Manager").exists() and request.user.is_superuser != True:
+        return render(request, 'STOCK.html')
+    elif request.user.is_superuser:
+        return render(request, 'index.html')
+    else:
+        return render(request, 'login.html')
 
 @user_passes_test(lambda user: user.is_authenticated)
 @shop_keeper_required

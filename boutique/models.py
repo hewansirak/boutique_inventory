@@ -119,7 +119,7 @@ class Purchase(models.Model):
     quantity = models.IntegerField()
 
     def __str__(self):
-        return f"{self.item.item_name}"
+        return f"{self.item.item_name}, {self.quantity}"
 
 class Employee(models.Model):
     employee_id = models.AutoField(primary_key=True)
