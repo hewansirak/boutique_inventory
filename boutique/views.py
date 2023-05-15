@@ -92,6 +92,9 @@ def sales_view(request):
         return render(request, 'sales.html', context)
 
 
+        currentUser = request.user
+        categoryData = Category.objects.get(categoryName=category)
+
 
 
 
