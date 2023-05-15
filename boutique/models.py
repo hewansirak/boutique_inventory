@@ -6,6 +6,8 @@ from boutique.constants import ROLES
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission, User
 # from .admin import CustomUserAdmin
+from datetime import date
+current_date = date.today()
 
 
 class CustomUserManager(BaseUserManager):
@@ -99,6 +101,7 @@ class Item(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    quantity = models.IntegerField(null=True)
 
     def __str__(self):
         return self.item_name
@@ -144,9 +147,9 @@ class Warehouse(models.Model):
 class Sales(models.Model):
     sales_id = models.AutoField(primary_key=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    sales_date = models.DateField()
+    sales_date = models.DateField(default=current_date)
     quantity = models.IntegerField()
-    seller = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    # seller = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.item.item_name} ({self.seller.employee_fname})"

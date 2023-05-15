@@ -12,7 +12,37 @@ class loginView(LoginView):
 
 def Home(request):
     if request.user.groups.filter(name="shop-keeper").exists() and request.user.is_superuser != True:
-        return render(request, 'SHOP.html')
+        if request.method == 'POST':
+            form = SalesForm(request.POST)
+            if form.is_valid():
+                item_id = form.cleaned_data['item']
+                quantity = form.cleaned_data['quantity']
+                
+                try:
+                    item = Item.objects.get(item_id=item_id.item_id)
+                except Item.DoesNotExist:
+                    # Handle the case when the item doesn't exist
+                    return redirect('sales')
+                
+                if item.quantity >= quantity:
+                    item.quantity -= quantity
+                    item.save()
+
+                    sale = Sales.objects.create(item=item, quantity=quantity)
+                    return redirect('home')
+                else:
+                    # Handle the case when there's not enough stock
+                    return redirect('sales')
+        else:
+            form = SalesForm()
+            items = Item.objects.all()
+            print(items)
+            context = {
+                'form': form,
+                'items': items
+            }
+            return render(request, 'shop.html', context)
+    
     elif request.user.groups.filter(name="stock-Manager").exists() and request.user.is_superuser != True:
         return render(request, 'STOCK.html')
     elif request.user.is_superuser:

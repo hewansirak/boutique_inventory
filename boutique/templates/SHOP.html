@@ -1,1 +1,60 @@
-<h1>THIS IS SHOP MANAGERS PAGE</h1>
+<!-- <h1>THIS IS SHOP MANAGERS PAGE</h1> -->
+{% extends 'index.html' %}
+
+{% block content %}
+  <h2>Sales</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div>
+      <label for="item">Item:</label>
+      <select name="item" id="item">
+        {% for item in items %}
+          <option value="{{ item.item_id }}">{{ item.item_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="quantity">Quantity:</label>
+      <input type="number" name="quantity" id="quantity" min="1" required>
+    </div>
+    <div>
+      <button type="submit">Sell</button>
+    </div>
+  </form>
+  
+  
+  <h3>Available Items</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Size</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Quantity to Sell</th>
+        <th>Price per Item</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td>{{ item.item_name }}</td>
+          <td>{{ item.size.size_name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.price }}</td>
+          <td>
+            <input type="number" name="quantity_{{ item.item_id }}">
+          </td>
+          <td>
+            <input type="number" name="price_{{ item.item_id }}">
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6">No items available</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+{% endblock %}
