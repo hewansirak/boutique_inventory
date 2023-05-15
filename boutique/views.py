@@ -152,3 +152,6 @@ def admin_dashboard(request):
     }
     return render(request, 'admin_dashboard.html', context)
 
+# def logout_view(request):
+#     logout(request)
+#     return HttpResponseRedirect(reverse("index"))
