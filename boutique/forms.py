@@ -21,7 +21,6 @@ class StockForm(forms.ModelForm):
 
 class SalesForm(forms.Form):
     item = forms.ModelChoiceField(queryset=Item.objects.all())
-    size = forms.ModelChoiceField(queryset=Size.objects.all())
     quantity = forms.IntegerField()
 
 

@@ -6,6 +6,8 @@ from boutique.constants import ROLES
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission, User
 # from .admin import CustomUserAdmin
+from datetime import date
+current_date = date.today()
 
 
 class CustomUserManager(BaseUserManager):
@@ -96,9 +98,11 @@ class Supplier(models.Model):
 class Item(models.Model):
     item_id = models.AutoField(primary_key=True)
     item_name = models.CharField(max_length=100)
+    imageurl = models.CharField(max_length=300, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    quantity = models.IntegerField(null=True)
 
     def __str__(self):
         return self.item_name
@@ -112,15 +116,6 @@ class ItemSize(models.Model):
     def __str__(self):
         return f"{self.item.item_name} - {self.size.size_name}"
 
-class Purchase(models.Model):
-    purchase_id = models.AutoField(primary_key=True)
-    purchase_date = models.DateField(auto_now_add=True)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.item.item_name}, {self.quantity}"
-
 class Employee(models.Model):
     employee_id = models.AutoField(primary_key=True)
     employee_fname = models.CharField(max_length=20)
@@ -132,6 +127,15 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.employee_fname
+    
+class Purchase(models.Model):
+    purchase_id = models.AutoField(primary_key=True)
+    purchase_date = models.DateField(auto_now_add=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.item.item_name}, {self.quantity}"
 
 class Warehouse(models.Model):
     warehouse_id = models.AutoField(primary_key=True)
@@ -144,25 +148,18 @@ class Warehouse(models.Model):
 class Sales(models.Model):
     sales_id = models.AutoField(primary_key=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    sales_date = models.DateField()
+    sales_date = models.DateField(default=current_date)
     quantity = models.IntegerField()
-    seller = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    # seller = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.item.item_name} ({self.seller.employee_fname})"
+        return f"{self.item}"
+        # return f"{self.item.item_name} ({self.seller.employee_fname})"
 
     def get_total_price(self, quantity=1):
         total_price = self.item.price * self.quantity
         return total_price
 
-class Stock(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    warehouse = models.ForeignKey('Warehouse', on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.item.name} ({self.warehouse.name})"
-    
 
 
 

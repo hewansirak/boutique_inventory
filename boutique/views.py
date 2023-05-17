@@ -7,19 +7,6 @@ from .forms import *
 from django.contrib.auth.views import LoginView
 
 
-class loginView(LoginView):
-    template_name = 'login.html'
-
-def Home(request):
-    if request.user.groups.filter(name="shop-keeper").exists() and request.user.is_superuser != True:
-        return render(request, 'SHOP.html')
-    elif request.user.groups.filter(name="stock-Manager").exists() and request.user.is_superuser != True:
-        return render(request, 'STOCK.html')
-    elif request.user.is_superuser:
-        return render(request, 'index.html')
-    else:
-        return render(request, 'login.html')
-
 @user_passes_test(lambda user: user.is_authenticated)
 @shop_keeper_required
 def sales_view(request):
@@ -52,6 +39,65 @@ def sales_view(request):
             'form': form
         }
         return render(request, 'sales.html', context)
+
+
+        currentUser = request.user
+        categoryData = Category.objects.get(categoryName=category)
+
+
+
+class loginView(LoginView):
+    template_name = 'login.html'
+
+def Home(request):
+    if request.user.groups.filter(name="shop-keeper").exists() and request.user.is_superuser != True:
+        if request.method == 'POST':
+            form = SalesForm(request.POST)
+            if form.is_valid():
+                item_id = form.cleaned_data['item']
+                quantity = form.cleaned_data['quantity']
+                
+                try:
+                    item = Item.objects.get(item_id=item_id.item_id)
+                except Item.DoesNotExist:
+                    # Handle the case when the item doesn't exist
+                    return redirect('sales')
+                
+                if item.quantity >= quantity:
+                    item.quantity -= quantity
+                    item.save()
+
+                    sale = Sales.objects.create(item=item, quantity=quantity)
+                    return redirect('home')
+                else:
+                    # Handle the case when there's not enough stock
+                    return redirect('sales')
+        else:
+            form = SalesForm()
+            items = Item.objects.all()
+            print(items)
+            context = {
+                'form': form,
+                'items': items
+            }
+            return render(request, 'shop.html', context)
+    
+    elif request.user.groups.filter(name="stock-Manager").exists() and request.user.is_superuser != True:
+        categories = Category.objects.all()
+        sizes = Size.objects.all()
+        items = Item.objects.filter(quantity__gt=0)
+        context = {
+            'categories': categories,
+            'sizes': sizes,
+            'items': items,
+        }
+        return render(request, 'stock.html', context)
+    elif request.user.is_superuser:
+        return redirect('/admin')
+        # return render(request, 'index.html')
+    else:
+        return render(request, 'login.html')
+
 
 
 @user_passes_test(lambda user: user.is_authenticated)
@@ -107,3 +153,6 @@ def admin_dashboard(request):
     }
     return render(request, 'admin_dashboard.html', context)
 
+# def logout_view(request):
+#     logout(request)
+#     return HttpResponseRedirect(reverse("index"))

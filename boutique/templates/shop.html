@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -13,7 +14,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"
     />
     <style>
-      body{
+      body {
         background: #f1f7fc;
       }
       .login-clean {
@@ -90,34 +91,59 @@
 
   <body>
     <div class="login-clean">
+      <!-- {% block content %}
+      <h2>Sales</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div>
+          <label for="item">Item:</label>
+          <select name="item" id="item">
+            {% for item in items %}
+            <option value="{{ item.item_id }}">{{ item.item_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="quantity">Quantity:</label>
+          <input type="number" name="quantity" id="quantity" min="1" required />
+        </div>
+        <div>
+          <button type="submit">Sell</button>
+        </div>
+      </form>
+
+      {% endblock %} -->
+
       <form method="post">
         {% csrf_token %}
         <h2 class="sr-only">Login Form</h2>
         <div class="illustration"><i class="icon ion-ios-navigate"></i></div>
+        <div class="text-center">Sales</div>
         <div class="form-group">
-          <input
-            class="form-control"
-            type="username"
-            name="username"
-            id="username"
-            placeholder="Username"
-          />
+          <!-- <label for="item">Item:</label> -->
+          <select name="item" id="item" class="form-control">
+            {% for item in items %}
+            <option value="{{ item.item_id }}">{{ item.item_name }}</option>
+            {% endfor %}
+          </select>
         </div>
         <div class="form-group">
           <input
             class="form-control"
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Password"
+            type="number"
+            name="quantity"
+            id="quantity"
+            min="1"
+            placeholder="Quantity"
+
+            required
           />
         </div>
         <div class="form-group">
           <button class="btn btn-primary btn-block" type="submit">
-            Log In
+            Sell
           </button>
         </div>
-        <a href="#" class="forgot">Forgot your email or password?</a>
       </form>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
