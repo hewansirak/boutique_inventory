@@ -7,6 +7,45 @@ from .forms import *
 from django.contrib.auth.views import LoginView
 
 
+@user_passes_test(lambda user: user.is_authenticated)
+@shop_keeper_required
+def sales_view(request):
+    if request.method == 'POST':
+        form = SalesForm(request.POST)
+        if form.is_valid():
+            item = form.cleaned_data['item']
+            size = form.cleaned_data['size']
+            attribute = form.cleaned_data['attribute']
+            quantity = form.cleaned_data['quantity']
+            if quantity <= item.quantity:
+                item.quantity -= quantity
+                item.save()
+                seller = request.user.employee
+                Sales.objects.create(item=item, size=size, attribute=attribute, quantity=quantity, seller=seller)
+                messages.success(request, 'Item sold successfully')
+                return redirect('sales')
+            else:
+                messages.error(request, 'Not enough stock')
+                return redirect('sales')
+    else:
+        form = SalesForm()
+        categories = Category.objects.all()
+        sizes = Size.objects.all()
+        items = Item.objects.filter(quantity__gt=0)
+        context = {
+            'categories': categories,
+            'sizes': sizes,
+            'items': items,
+            'form': form
+        }
+        return render(request, 'sales.html', context)
+
+
+        currentUser = request.user
+        categoryData = Category.objects.get(categoryName=category)
+
+
+
 class loginView(LoginView):
     template_name = 'login.html'
 
@@ -58,45 +97,6 @@ def Home(request):
         # return render(request, 'index.html')
     else:
         return render(request, 'login.html')
-
-@user_passes_test(lambda user: user.is_authenticated)
-@shop_keeper_required
-def sales_view(request):
-    if request.method == 'POST':
-        form = SalesForm(request.POST)
-        if form.is_valid():
-            item = form.cleaned_data['item']
-            size = form.cleaned_data['size']
-            attribute = form.cleaned_data['attribute']
-            quantity = form.cleaned_data['quantity']
-            if quantity <= item.quantity:
-                item.quantity -= quantity
-                item.save()
-                seller = request.user.employee
-                Sales.objects.create(item=item, size=size, attribute=attribute, quantity=quantity, seller=seller)
-                messages.success(request, 'Item sold successfully')
-                return redirect('sales')
-            else:
-                messages.error(request, 'Not enough stock')
-                return redirect('sales')
-    else:
-        form = SalesForm()
-        categories = Category.objects.all()
-        sizes = Size.objects.all()
-        items = Item.objects.filter(quantity__gt=0)
-        context = {
-            'categories': categories,
-            'sizes': sizes,
-            'items': items,
-            'form': form
-        }
-        return render(request, 'sales.html', context)
-
-
-        currentUser = request.user
-        categoryData = Category.objects.get(categoryName=category)
-
-
 
 
 
