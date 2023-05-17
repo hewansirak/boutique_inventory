@@ -160,14 +160,6 @@ class Sales(models.Model):
         total_price = self.item.price * self.quantity
         return total_price
 
-class Stock(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    warehouse = models.ForeignKey('Warehouse', on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.item.name} ({self.warehouse.name})"
-    
 
 
 
