@@ -54,7 +54,8 @@ def Home(request):
         }
         return render(request, 'stock.html', context)
     elif request.user.is_superuser:
-        return render(request, 'index.html')
+        return redirect('/admin')
+        # return render(request, 'index.html')
     else:
         return render(request, 'login.html')
 

@@ -116,15 +116,6 @@ class ItemSize(models.Model):
     def __str__(self):
         return f"{self.item.item_name} - {self.size.size_name}"
 
-class Purchase(models.Model):
-    purchase_id = models.AutoField(primary_key=True)
-    purchase_date = models.DateField(auto_now_add=True)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.item.item_name}, {self.quantity}"
-
 class Employee(models.Model):
     employee_id = models.AutoField(primary_key=True)
     employee_fname = models.CharField(max_length=20)
@@ -136,6 +127,15 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.employee_fname
+    
+class Purchase(models.Model):
+    purchase_id = models.AutoField(primary_key=True)
+    purchase_date = models.DateField(auto_now_add=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.item.item_name}, {self.quantity}"
 
 class Warehouse(models.Model):
     warehouse_id = models.AutoField(primary_key=True)
